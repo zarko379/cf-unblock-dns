@@ -1,0 +1,35 @@
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-go@v6
+        with:
+          go-version: stable
+          cache: false
+      - name: gofmt
+        run: test -z "$(gofmt -l .)" || { gofmt -l .; exit 1; }
+      - name: go vet
+        run: go vet ./...
+      - name: go test
+        run: go test -race -count=1 ./...
+      - name: Compilar para Linux (amd64, arm64, arm)
+        run: |
+          for arch in amd64 arm64 arm; do
+            CGO_ENABLED=0 GOOS=linux GOARCH=$arch GOARM=6 go build -trimpath -buildvcs=false -o /dev/null .
+          done
+      - name: Scripts
+        run: |
+          bash -n install.sh uninstall.sh check.sh get.sh
+          shellcheck -S error install.sh uninstall.sh check.sh get.sh
+          python3 -m py_compile deploy.py release.py

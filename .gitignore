@@ -1,0 +1,18 @@
+# Archivos de ejecución locales
+*.log
+__pycache__/
+*.pyc
+.DS_Store
+.venv/
+
+# Credenciales y huellas SSH de deploy.py: nunca al repositorio
+.env
+.ssh_known_hosts
+
+# Binarios compilados
+/cfu
+/dist/
+*.exe
+
+# Notas locales para Claude Code: nunca al repositorio
+CLAUDE.md

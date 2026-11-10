@@ -1,0 +1,27 @@
+[Unit]
+Description=cf-unblock-dns: DNS proxy between Pi-hole and Unbound
+After=network-online.target unbound.service
+Wants=network-online.target
+Before=pihole-FTL.service
+
+[Service]
+Type=simple
+User=cf-unblock-dns
+Group=cf-unblock-dns
+EnvironmentFile=-/etc/default/cf-unblock-dns
+ExecStart=/opt/cf-unblock-dns/cfu serve $CFU_DNS_ARGS
+Restart=always
+RestartSec=2
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/var/lib/cf-unblock-dns
+RestrictAddressFamilies=AF_UNIX AF_INET AF_INET6
+RestrictNamespaces=true
+RestrictRealtime=true
+RestrictSUIDSGID=true
+LockPersonality=true
+
+[Install]
+WantedBy=multi-user.target

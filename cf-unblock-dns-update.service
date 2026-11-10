@@ -1,0 +1,28 @@
+[Unit]
+Description=cf-unblock-dns: keep the blocked-IP list up to date
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=simple
+User=cf-unblock-dns
+Group=cf-unblock-dns
+Environment=CFU_UPDATE_INTERVAL=15
+EnvironmentFile=-/etc/default/cf-unblock-dns
+ExecStart=/opt/cf-unblock-dns/cfu list update --loop ${CFU_UPDATE_INTERVAL}
+Restart=always
+RestartSec=10
+Nice=10
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/var/lib/cf-unblock-dns
+RestrictAddressFamilies=AF_UNIX AF_INET AF_INET6
+RestrictNamespaces=true
+RestrictRealtime=true
+RestrictSUIDSGID=true
+LockPersonality=true
+
+[Install]
+WantedBy=multi-user.target
